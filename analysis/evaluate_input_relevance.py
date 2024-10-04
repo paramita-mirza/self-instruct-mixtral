@@ -1,6 +1,6 @@
 import json
 
-instances_file = "../data/mixtral_8x22b_generations_alpaca_100/machine_generated_instructions_instances.jsonl"
+instances_file = "../self_instruct_alpaca/data/mixtral_8x22b_generations_alpaca_100/machine_generated_instructions_instances.jsonl"
 
 if __name__ == "__main__":
     print(f"File to evaluate: {instances_file}")
