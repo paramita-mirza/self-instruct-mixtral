@@ -29,10 +29,7 @@ of 500 instructions, the classifier gets 94% macro F1-score.
 Otherwise, run ``python run_analysis.py --analysis categories --dataset <dataset_name(s)>`` to run the classifier on 
 specific dataset(s), e.g., ``python run_analysis.py --analysis categories --dataset sigma_v2_evol,deita_10k``. 
 List of available datasets below.
-2. The categories (and pie chart) will be saved in ``categories/``, e.g.,
-
-![Alt text](categories/sigma_v2_evol.png?raw=true "Title")
-![Alt text](categories/deita_10k.png?raw=true "Title")
+2. The categories (and pie chart) will be saved in ``categories/``.
 
 #### Running Complexity Analysis
 
@@ -40,10 +37,7 @@ List of available datasets below.
 Otherwise, run ``python run_analysis.py --analysis complexity --dataset <dataset_name(s)>`` to run the classifier on 
 specific dataset(s), e.g., ``python run_analysis.py --analysis complexity --dataset sigma_v2_evol,deita_10k``. 
 List of available datasets below.
-2. The scores (and histogram) will be saved in ``complexity_scores/``, e.g.,
-
-![Alt text](complexity_scores/sigma_v2_evol.png?raw=true "Title")
-![Alt text](complexity_scores/deita_10k.png?raw=true "Title")
+2. The scores (and histogram) will be saved in ``complexity_scores/``.
 
 #### Running Quality Analysis
 
@@ -51,10 +45,7 @@ List of available datasets below.
 Otherwise, run ``python run_analysis.py --analysis quality --dataset <dataset_name(s)>`` to run the classifier on 
 specific dataset(s), e.g., ``python run_analysis.py --analysis quality --dataset sigma_v2_evol,deita_10k``. 
 List of available datasets below.
-2. The scores (and histogram) will be saved in ``quality_scores/``, e.g.,
-
-![Alt text](quality_scores/sigma_v2_evol.png?raw=true "Title")
-![Alt text](quality_scores/deita_10k.png?raw=true "Title")
+2. The scores (and histogram) will be saved in ``quality_scores/``.
 
 #### Complexity/Quality analysis on existing datasets
 
@@ -68,10 +59,7 @@ Run ``python compute_correlations.py``
 Otherwise, run ``python run_analysis.py --analysis tagging --dataset <dataset_name(s)>`` to run the classifier on 
 specific dataset(s), e.g., ``python run_analysis.py --analysis tagging --dataset sigma_v2_evol,deita_10k``. 
 List of available datasets below.
-2. The scores (and histogram) will be saved in ``instagger/``, e.g.,
-
-![Alt text](instagger/sigma_v2_evol.png?raw=true "Title")
-![Alt text](instagger/deita_10k.png?raw=true "Title")
+2. The scores (and histogram) will be saved in ``instagger/``.
 
 #### Diversity analysis on existing datasets, based on #InsTag and embedding distance
 
