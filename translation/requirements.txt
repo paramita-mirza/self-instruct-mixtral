@@ -1,0 +1,9 @@
+datasets
+deepl
+jsonlines
+openai
+retry
+setuptools
+tqdm
+fasttext
+vllm
