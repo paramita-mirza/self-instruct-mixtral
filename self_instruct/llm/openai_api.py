@@ -6,13 +6,15 @@ from typing import Union, List
 import json
 import tqdm
 
+chat_models = ['gpt-4o', 'gpt-4o-mini']
+
 class OpenAILLM():
     def __init__(
         self,
         model: str = "gpt-3.5-turbo-instruct"
     ):
         self.model_name = model
-        self.client = OpenAI()
+        self.endpoint = OpenAI().chat.completions if model in chat_models else OpenAI().completions
 
         self.domain_model_name = self.model_name
         self.intent_model_name = self.model_name
@@ -25,22 +27,34 @@ class OpenAILLM():
         split_lines: bool = False,
         temperature: float = 0,
         frequency_penalty: float = 2.0,
-        presence_penalty: float = 2.0
+        presence_penalty: float = 2.0,
+        stop_sequences: List[str] = ["\\n"]
     ) -> str:
         assert 'OPENAI_API_KEY' in os.environ.keys(), \
             "Please set your OPENAI_API_KEY!"
-        responses = self.client.completions.create(
-            model=self.model_name,
-            prompt=prompts,
-            temperature=temperature,
-            max_tokens=max_new_tokens,
-            top_p=1,
-            frequency_penalty=frequency_penalty,
-            presence_penalty=presence_penalty,
-            stop=["\\n"]
-        ).choices
-
-        responses = [response.text.strip() for response in responses]
+            
+        if self.model_name in chat_models:
+            inputs = {
+                'model': self.model_name,
+                'messages': prompts,
+                'temperature': temperature,
+                }
+        else:
+            inputs = {
+                'model': self.model_name,
+                'prompt': prompts,
+                'temperature': temperature,
+                'max_tokens': max_new_tokens,
+                'top_p': 1,
+                'frequency_penalty': frequency_penalty,
+                'presence_penalty': presence_penalty,
+                'stop': stop_sequences}
+                
+        responses = self.endpoint.create(**inputs).choices
+        if self.model_name in chat_models:
+            responses = [response.message.content for response in responses]
+        else:
+            responses = [response.text.strip() for response in responses]
         if split_lines:
             responses_post = []
             for response in responses:
@@ -50,6 +64,11 @@ class OpenAILLM():
                     responses_post.append(response)
 
         return responses
+    
+    def make_requests(self, prompts, max_tokens=10, do_sample=True, temperature=.0, top_p=1., stop_sequences = ["##EOS##"]):
+        if self.model_name in chat_models:
+            prompts = [{"role": "user", "content": prompt} for prompt in prompts]
+        return self.run(prompts,max_new_tokens=max_tokens, split_lines = False, temperature=temperature, stop_sequences=stop_sequences)
 
 def parse_args():
     parser = argparse.ArgumentParser()

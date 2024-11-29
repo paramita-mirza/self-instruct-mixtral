@@ -34,6 +34,18 @@ def load_sft_dataset(dataset_name: str):
         instructions = [f"{sample['instruction']}\n\n{sample['input']}" for sample in samples]
         responses = [f"{sample['output']}" for sample in samples]
 
+    elif dataset_name == "UltraInteract_math_28k":
+        dataset_title = "UltraInteract 28k (Math only; no interactions)"
+        samples = [json.loads(l) for l in open("../data/UltraInteract_math_28k.jsonl", "r")]
+        instructions = [f"{sample['instruction']}\n\n{sample['input']}" for sample in samples]
+        responses = [f"{sample['output']}" for sample in samples]
+
+    elif dataset_name == "fewshot_data_19k":
+        dataset_title = "Fewshot data 19k (GSM8k; MMLU; Winogrande; Arc)"
+        samples = [json.loads(l) for l in open("../data/fewshot_data.jsonl", "r")]
+        instructions = [f"{sample['instruction']}\n\n{sample['input']}" for sample in samples]
+        responses = [f"{sample['output']}" for sample in samples]
+
     elif dataset_name == "llama_sigma2_10k_regenerated":
         dataset_title = "SIGMA2 10k (with LLama3.1-8B, output regenerated)"
         samples = [json.loads(l) for l in open("../data/llama_sigma2_10k_regenerated.jsonl", "r")]
@@ -87,6 +99,38 @@ def load_sft_dataset(dataset_name: str):
     elif dataset_name == "sigma_v3":
         dataset_title = "SIGMA v3"
         samples = [json.loads(l) for l in open("../data/sigma_v3.jsonl", "r")]
+        instructions = [f"{sample['instruction']}\n\n{sample['input']}" if "input" in sample and sample["input"] != ""
+                        else f"{sample['instruction']}"
+                        for sample in samples]
+        responses = [f"{sample['output']}" for sample in samples]
+
+    elif dataset_name == "sigma_30k":
+        dataset_title = "SIGMA 30k"
+        samples = [json.loads(l) for l in open("../data/sigma_30k.jsonl", "r")]
+        instructions = [f"{sample['instruction']}\n\n{sample['input']}" if "input" in sample and sample["input"] != ""
+                        else f"{sample['instruction']}"
+                        for sample in samples]
+        responses = [f"{sample['output']}" for sample in samples]
+
+    elif dataset_name == "sigma_30k_evolved":
+        dataset_title = "SIGMA 30k (evolved)"
+        samples = [json.loads(l) for l in open("../data/sigma_30k_evolved.jsonl", "r")]
+        instructions = [f"{sample['instruction']}\n\n{sample['input']}" if "input" in sample and sample["input"] != ""
+                        else f"{sample['instruction']}"
+                        for sample in samples]
+        responses = [f"{sample['output']}" for sample in samples]
+
+    elif dataset_name == "llama_sigma":
+        dataset_title = "LLama SIGMA 10k"
+        samples = [json.loads(l) for l in open("../data/llama_sigma.jsonl", "r")]
+        instructions = [f"{sample['instruction']}\n\n{sample['input']}" if "input" in sample and sample["input"] != ""
+                        else f"{sample['instruction']}"
+                        for sample in samples]
+        responses = [f"{sample['output']}" for sample in samples]
+
+    elif dataset_name == "llama_sigma_evolved":
+        dataset_title = "LLama SIGMA 10k (evolved)"
+        samples = [json.loads(l) for l in open("../data/llama_sigma_evolved.jsonl", "r")]
         instructions = [f"{sample['instruction']}\n\n{sample['input']}" if "input" in sample and sample["input"] != ""
                         else f"{sample['instruction']}"
                         for sample in samples]
@@ -223,6 +267,99 @@ def load_sft_dataset(dataset_name: str):
         samples = [json.loads(l) for l in open("../data/open_math_instruct.jsonl", "r")]
         instructions = [f"{sample['instruction']}" for sample in samples]
         responses = [f"{sample['output']}" for sample in samples]
+
+    elif dataset_name == "cs_net_python_20k":
+        dataset_title = "CodeSearchNet 20k"
+        samples = [json.loads(l) for l in open("../data/cs_net_python_20k.jsonl", "r")]
+        instructions = [f"{sample['instruction']}" for sample in samples]
+        responses = [f"{sample['output']}" for sample in samples]
+
+    elif dataset_name == "fewshot_data_v2":
+        dataset_title = "Few-shot data V2"
+        samples = [json.loads(l) for l in open("../data/fewshot_data_v2.jsonl", "r")]
+        instructions = [f"{sample['instruction']}" for sample in samples]
+        responses = [f"{sample['output']}" for sample in samples]
+
+    elif dataset_name == "fewshot_data_v3":
+        dataset_title = "Few-shot data V3"
+        samples = [json.loads(l) for l in open("/raid/s3/opengptx/lucas/data/fewshot_data_v3.jsonl", "r")]
+        # Analyze only the last turn as instructions and responses, since previous turns are few-shot examples
+        instructions = [f"{sample['messages'][-2]['content']}" for sample in samples]
+        responses = [f"{sample['messages'][-1]['content']}" for sample in samples]
+
+    elif dataset_name == "everyday_conversations_mixtral_v2":
+        dataset_title = "Everyday Conversation (Mixtral) V2"
+        samples = [json.loads(l) for l in open("/raid/s3/opengptx/lucas/data/everyday_conversations_mixtral_v2.jsonl", "r")]
+        # Analyze only the first turn as instructions and responses
+        instructions = [f"{sample['messages'][0]['content']}" for sample in samples if len(sample['messages']) > 1]
+        responses = [f"{sample['messages'][1]['content']}" for sample in samples if len(sample['messages']) > 1]
+
+    elif dataset_name == "teuken_guide_en":
+        dataset_title = "Teuken Guide (English)"
+        samples = [json.loads(l) for l in open("/raid/s3/opengptx/alignment_data/data/teuken-guide/commercial/train_teuken_guide.jsonl", "r")]
+        filtered_samples = []
+        for i, sample in enumerate(samples):
+            if sample['language'] == 'EN' and sample['composition'] != 'en_high_quality_translated_to_de':
+                if len(sample['conversations']) < 2:    # Erroneous sample
+                    print(i, sample['id'])
+                else:
+                    if sample['conversations'][0]['from'] == "human" and sample['conversations'][1]['from'] == "gpt":
+                        filtered_samples.append(sample)
+                    else:
+                        print(i, sample['id'])
+                    
+        # Analyze only the first turn as instructions and responses
+        instructions = [f"{sample['conversations'][0]['value']}" for sample in filtered_samples]
+        responses = [f"{sample['conversations'][1]['value']}" for sample in filtered_samples]
+
+        # Save the filtered data
+        with open("/raid/s3/opengptx/lucas/data/teuken_guide_en.jsonl", 'w') as fout:
+            for i, sample in enumerate(filtered_samples):
+                conv = sample.pop('conversations')
+                sample_id = sample.pop('id')
+                source = '_'.join(sample_id.split('_')[:-1])
+                sample = {'data_id': f"teg_v1_en_{i}",
+                          'origin': f"teg_{source}",
+                          'language': 'en',
+                          'messages': [{'content': turn['value'], 'role': "user"} if turn['from'] == "human" else
+                                       {'content': turn['value'], 'role': "assistant"}
+                                       for turn in conv],
+                          **sample}
+                fout.write(json.dumps(sample) + '\n')
+
+    elif dataset_name == "teuken_guide_de":
+        dataset_title = "Teuken Guide (Deutsch)"
+        samples = [json.loads(l) for l in
+                   open("/raid/s3/opengptx/alignment_data/data/teuken-guide/commercial/train_teuken_guide.jsonl", "r")]
+        filtered_samples = []
+        for i, sample in enumerate(samples):
+            if sample['language'] == 'DE' or sample['composition'] == 'en_high_quality_translated_to_de':
+                if len(sample['conversations']) < 2:  # Erroneous sample
+                    print(i, sample['id'])
+                else:
+                    if sample['conversations'][0]['from'] == "human" and sample['conversations'][1]['from'] == "gpt":
+                        filtered_samples.append(sample)
+                    else:
+                        print(i, sample['id'])
+
+        # Analyze only the first turn as instructions and responses
+        instructions = [f"{sample['conversations'][0]['value']}" for sample in filtered_samples]
+        responses = [f"{sample['conversations'][1]['value']}" for sample in filtered_samples]
+
+        # Save the filtered data
+        with open("/raid/s3/opengptx/lucas/data/teuken_guide_de.jsonl", 'w') as fout:
+            for i, sample in enumerate(filtered_samples):
+                conv = sample.pop('conversations')
+                sample_id = sample.pop('id')
+                source = '_'.join(sample_id.split('_')[:-1])
+                sample = {'data_id': f"teg_v1_de_{i}",
+                          'origin': f"teg_{source}",
+                          'language': 'de',
+                          'messages': [{'content': turn['value'], 'role': "user"} if turn['from'] == "human" else
+                                       {'content': turn['value'], 'role': "assistant"}
+                                       for turn in conv],
+                          **sample}
+                fout.write(json.dumps(sample) + '\n')
 
     else:
         print("No dataset specification found (in utils.py)!")

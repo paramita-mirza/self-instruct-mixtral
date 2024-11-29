@@ -29,6 +29,12 @@ def parse_args():
         action="store_true",
         help="Whether to force repeat running the analyzer.",
     )
+    parser.add_argument(
+        "--output_dir",
+        type=str,
+        default="./",
+        help="Where to store the analysis results."
+    )
     parser.set_defaults(repeat_analysis=False)
     return parser.parse_args()
 
@@ -43,7 +49,7 @@ if __name__ == "__main__":
                      "sharegpt", "oasst2", "ultrachat"]
     if args.dataset != "all": dataset_names = args.dataset.split(",")
 
-    analysis_types = ["complexity", "quality", "tagging", "tokens", "embeddings", "reward_modelling"]
+    analysis_types = ["categories", "complexity", "quality", "tagging", "tokens", "embeddings", "reward_modelling"]
     if args.analysis != "all": analysis_types = args.analysis.split(",")
 
     for analysis_type in analysis_types:
@@ -52,37 +58,37 @@ if __name__ == "__main__":
         if analysis_type == "complexity":
             from analyzer.complexity_scorer import ComplexityScorer
             analyzer = ComplexityScorer()
-            output_dir = "./complexity_scores"
+            output_dir = os.path.join(args.output_dir, "./complexity_scores")
 
         elif analysis_type == "quality":
             from analyzer.quality_scorer import QualityScorer
             analyzer = QualityScorer()
-            output_dir = "./quality_scores"
+            output_dir = os.path.join(args.output_dir, "./quality_scores")
 
         elif analysis_type == "tagging":
             from analyzer.instruction_tagger import InsTagger
             analyzer = InsTagger()
-            output_dir = "./instagger"
+            output_dir = os.path.join(args.output_dir, "./instagger")
 
         elif analysis_type == "tokens":
             from analyzer.token_counter import TokenCounter
             analyzer = TokenCounter()
-            output_dir = "./token_length"
+            output_dir = os.path.join(args.output_dir, "./token_length")
 
         elif analysis_type == "embeddings":
             from analyzer.embedding_distance import EmbeddingDistance
             analyzer = EmbeddingDistance()
-            output_dir = "./embedding_distance"
+            output_dir = os.path.join(args.output_dir, "./embedding_distance")
 
         elif analysis_type == "reward_modelling":
             from analyzer.reward_modeller import RewardModeller
             analyzer = RewardModeller(from_scratch=True)
-            output_dir = "./reward_scores"
+            output_dir = os.path.join(args.output_dir, "./reward_scores")
 
         elif analysis_type == "categories":
             from analyzer.instruction_classifier import InsClassifier
             analyzer = InsClassifier()
-            output_dir = "./categories"
+            output_dir = os.path.join(args.output_dir, "./categories")
 
         else:
             print("No analysis type found!")
@@ -136,8 +142,8 @@ if __name__ == "__main__":
 
                 # Categories, if exists
                 categories = None
-                if glob.glob(f"insclassifier/{dataset_name}.csv"):
-                    with open(f"insclassifier/{dataset_name}.csv") as fcats:
+                if glob.glob(f"{os.path.join(args.output_dir, './categories')}/{dataset_name}.csv"):
+                    with open(f"{os.path.join(args.output_dir, './categories')}/{dataset_name}.csv") as fcats:
                         categories = [line.strip() for line in fcats.readlines()]
 
                 if not result_exists or args.repeat_analysis:

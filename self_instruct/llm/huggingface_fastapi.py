@@ -15,7 +15,16 @@ def parse_args():
     parser.add_argument(
         "--hf_model_id",
         type=str,
+        required=True,
+        default="mistralai/Mixtral-8x7B-Instruct-v0.1",
         help="The model name.",
+    )
+    parser.add_argument(
+        "--hf_cache_dir",
+        type=str,
+        required=True,
+        default="~/.cache/huggingface/hub/",
+        help="The HF cache dir.",
     )
     parser.add_argument(
         "--host",
@@ -36,7 +45,7 @@ args = parse_args()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Load the ML model
-    app.state.llm = HuggingFaceLLM(model_name=args.hf_model_id)
+    app.state.llm = HuggingFaceLLM(model_name=args.hf_model_id, cache_dir=args.hf_cache_dir)
     yield
     # Clean up the ML models and release the resources
     # app.state.llm.clear()

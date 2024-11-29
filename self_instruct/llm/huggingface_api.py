@@ -25,7 +25,7 @@ class HuggingFaceLLM():
     def __init__(
             self,
             model_name: str = "mistralai/Mixtral-8x7B-Instruct-v0.1",
-            cache_dir: str = "/data/horse/ws/pami666g-transformers/",
+            cache_dir: str = "~/.cache/huggingface/hub/",
             device: str = "cuda",
             use_accelerate: bool = True,
             use_fast: bool = True,
@@ -194,6 +194,10 @@ class HuggingFaceLLM():
                 "created_at": str(datetime.now()),
             }
             return [data]
+        
+    def magicoder_request(self, messages, max_tokens=10, temperature=1.0, model=None, n=1, seed=1):
+        prompts = [self.tokenizer.apply_chat_template(m, tokenize=False) for m in messages]
+        return self.make_requests(prompts=prompts, max_tokens=max_tokens, do_sample=True, temperature=temperature,top_p=1.0,stop_sequences=self.tokenizer.eos_token)
 
 
 def parse_args():
@@ -211,14 +215,22 @@ def parse_args():
     parser.add_argument(
         "--hf_model_id",
         type=str,
+        required=True,
         default="mistralai/Mixtral-8x7B-Instruct-v0.1",
         help="The HF model id.",
     )
     parser.add_argument(
         "--hf_cache_dir",
         type=str,
-        default="/data/horse/ws/pami666g-transformers/",
+        required=True,
+        default="~/.cache/huggingface/hub/",
         help="The HF cache dir.",
+    )
+    parser.add_argument(
+        "--device",
+        type=str,
+        default="cuda",
+        help="Device.",
     )
     parser.add_argument(
         "--max_tokens",
@@ -231,6 +243,7 @@ def parse_args():
         action="store_true",
         help="The do_sample of Mixtral.",
     )
+    parser.set_defaults(do_sample=True)
     parser.add_argument(
         "--temperature",
         default=0.7,
@@ -271,7 +284,7 @@ if __name__ == "__main__":
 
     with open(args.input_file, "r") as fin:
         if args.input_file.endswith(".jsonl"):
-            all_prompts = [json.loads(line)["instruction"] + " Please explain your reasoning when possible." + "\n### Input: " + json.loads(line)["input"] + "\n### Output:" for line in fin]
+            all_prompts = ["You are a helpful AI assistant. Follow the instruction and give a reasoning when necessary.\n### Instruction: " + json.loads(line)["instruction"] + "\n### Input: " + json.loads(line)["input"] + "\n### Output:" for line in fin]
         else:
             all_prompts = [line.strip().replace("\\n", "\n") for line in fin]
 

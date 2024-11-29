@@ -1,0 +1,10 @@
+torch
+tqdm
+requests
+transformers
+numpy
+accelerate
+chromadb
+fastapi
+flash-attn
+sentencepiece

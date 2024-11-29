@@ -6,7 +6,7 @@ import matplotlib.cm as cm
 import scipy.stats
 import json
 import random
-
+import os
 
 def compute_correlations(title: str, filename: str, x_array: List, y_array: List, x_label: str, y_label: str, xmax: int, ymax: int):
     # Fit linear regression via least squares with numpy.polyfit
@@ -41,6 +41,12 @@ def parse_args():
         type=str,
         default="all",
         help="The dataset name. The default is 'all', all datasets will be processed.",
+    )
+    parser.add_argument(
+        "--analysis_dir",
+        type=str,
+        default="./",
+        help="Where to store the analysis results."
     )
     return parser.parse_args()
 
@@ -85,12 +91,12 @@ if __name__ == "__main__":
         unique_tags = {}
         unique_tags_10k = {}
 
-        with open(f"token_length/{dataset_name}_instructions.csv") as finst_len, \
-                open(f"token_length/{dataset_name}_responses.csv") as fresp_len, \
-                open(f"complexity_scores/{dataset_name}.csv") as fcomplexity, \
-                open(f"quality_scores/{dataset_name}.csv") as fquality, \
-                open(f"instagger/{dataset_name}.jsonl") as ftags, \
-                open(f"embedding_distance/{dataset_name}.csv") as fembedding:
+        with open(f"{os.path.join(args.analysis_dir, 'token_length')}/{dataset_name}_instructions.csv") as finst_len, \
+                open(f"{os.path.join(args.analysis_dir, 'token_length')}/{dataset_name}_responses.csv") as fresp_len, \
+                open(f"{os.path.join(args.analysis_dir, 'complexity_scores')}/{dataset_name}.csv") as fcomplexity, \
+                open(f"{os.path.join(args.analysis_dir, 'quality_scores')}/{dataset_name}.csv") as fquality, \
+                open(f"{os.path.join(args.analysis_dir, 'instagger')}/{dataset_name}.jsonl") as ftags, \
+                open(f"{os.path.join(args.analysis_dir, 'embedding_distance')}/{dataset_name}.csv") as fembedding:
 
             inst_length += [int(line.strip()) for line in finst_len.readlines()]
             resp_length += [int(line.strip()) for line in fresp_len.readlines()]

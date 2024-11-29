@@ -3,7 +3,7 @@
 This repository contains code and data for analyzing instruction-following data.
 
 - We use [SetFit](https://github.com/huggingface/setfit) for efficient few-shot learning with Sentence Transformers
-for classifying instructions into 10 categories: [Classify, Extract, Closed QA, Generation, Open QA, Rewrite,
+for classifying instructions into 10 categories with [SIGMA-cls](https://huggingface.co/paramitopia/sigma-cls): [Classify, Extract, Closed QA, Generation, Open QA, Rewrite,
 Brainstorm, Coding, Summarize, Math]. We construct the training data (``data/no_robots_gsm8k_train.jsonl``) by sampling 50 samples per category from 
 [No Robots](https://huggingface.co/datasets/HuggingFaceH4/no_robots) dataset and 
 [GSM8K](https://github.com/google-research/FLAN/blob/main/flan/v2/cot_data/gsm8k_train.tsv) dataset. 
@@ -29,7 +29,10 @@ of 500 instructions, the classifier gets 94% macro F1-score.
 Otherwise, run ``python run_analysis.py --analysis categories --dataset <dataset_name(s)>`` to run the classifier on 
 specific dataset(s), e.g., ``python run_analysis.py --analysis categories --dataset sigma_v2_evol,deita_10k``. 
 List of available datasets below.
-2. The categories (and pie chart) will be saved in ``categories/``.
+2. The categories (and pie chart) will be saved in ``categories/``, e.g.,
+
+![Alt text](categories/sigma_v2_evol.png?raw=true "Title")
+![Alt text](categories/deita_10k.png?raw=true "Title")
 
 #### Running Complexity Analysis
 
@@ -37,7 +40,10 @@ List of available datasets below.
 Otherwise, run ``python run_analysis.py --analysis complexity --dataset <dataset_name(s)>`` to run the classifier on 
 specific dataset(s), e.g., ``python run_analysis.py --analysis complexity --dataset sigma_v2_evol,deita_10k``. 
 List of available datasets below.
-2. The scores (and histogram) will be saved in ``complexity_scores/``.
+2. The scores (and histogram) will be saved in ``complexity_scores/``, e.g.,
+
+![Alt text](complexity_scores/sigma_v2_evol.png?raw=true "Title")
+![Alt text](complexity_scores/deita_10k.png?raw=true "Title")
 
 #### Running Quality Analysis
 
@@ -45,7 +51,10 @@ List of available datasets below.
 Otherwise, run ``python run_analysis.py --analysis quality --dataset <dataset_name(s)>`` to run the classifier on 
 specific dataset(s), e.g., ``python run_analysis.py --analysis quality --dataset sigma_v2_evol,deita_10k``. 
 List of available datasets below.
-2. The scores (and histogram) will be saved in ``quality_scores/``.
+2. The scores (and histogram) will be saved in ``quality_scores/``, e.g.,
+
+![Alt text](quality_scores/sigma_v2_evol.png?raw=true "Title")
+![Alt text](quality_scores/deita_10k.png?raw=true "Title")
 
 #### Complexity/Quality analysis on existing datasets
 
@@ -59,7 +68,10 @@ Run ``python compute_correlations.py``
 Otherwise, run ``python run_analysis.py --analysis tagging --dataset <dataset_name(s)>`` to run the classifier on 
 specific dataset(s), e.g., ``python run_analysis.py --analysis tagging --dataset sigma_v2_evol,deita_10k``. 
 List of available datasets below.
-2. The scores (and histogram) will be saved in ``instagger/``.
+2. The scores (and histogram) will be saved in ``instagger/``, e.g.,
+
+![Alt text](instagger/sigma_v2_evol.png?raw=true "Title")
+![Alt text](instagger/deita_10k.png?raw=true "Title")
 
 #### Diversity analysis on existing datasets, based on #InsTag and embedding distance
 
@@ -67,6 +79,16 @@ Run ``python compute_correlations.py``
 
 ![Alt text](correlations/num_unique_tags_10k.png?raw=true "Title")
 ![Alt text](correlations/num_unique_tags_10k_avg_embedding.png?raw=true "Title")
+
+#### Running Reward Model Preference analysis on existing datasets
+
+1. Run ``python run_analysis.py --analysis reward_modelling``, which will run the reward model on all considered datasets. 
+Otherwise, run ``python run_analysis.py --analysis reward_modelling --dataset <dataset_name(s)>`` to run the classifier on 
+specific dataset(s), e.g., ``python run_analysis.py --analysis reward_modelling --dataset sigma_v2_evol,deita_10k``. 
+List of available datasets below.
+2. The scores (and histogram) will be saved in ``reward_scores/``, e.g.,
+
+![Alt text](reward_scores/sigma_v2_evol_category.png?raw=true "Title")
 
 #### Correlation between scores, token length and #tags
 
